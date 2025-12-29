@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RAGentic.ai - Autonomous AI Research Assistant with Agentic AI and RAG">
+    <title>RAGentic.ai - Autonomous AI Research Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&family=Josefin+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-container" onclick="showPage('home')">
+                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#6c5ce7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#00c8ff;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="15" y="15" width="70" height="70" rx="12" fill="url(#logoGradient)" opacity="0.15"/>
+                    <path d="M25 50 L40 30 L50 30 L65 50 L50 70 L40 70 Z" fill="url(#logoGradient)"/>
+                    <circle cx="50" cy="50" r="8" fill="#fff"/>
+                    <path d="M50 25 L50 15 M50 75 L50 85 M25 50 L15 50 M75 50 L85 50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M35 35 L40 40 M65 35 L60 40 M35 65 L40 60 M65 65 L60 60" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="logo-text">RAGentic.ai</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="showPage('home'); return false;" class="nav-link active">Home</a>
+                <a href="#" onclick="showPage('documents'); return false;" class="nav-link">Documents</a>
+                <a href="#" onclick="showPage('about'); return false;" class="nav-link">About</a>
+                <a href="#" onclick="showPage('how-it-works'); return false;" class="nav-link">How It Works</a>
+                <a href="#" onclick="showPage('features'); return false;" class="nav-link">Features</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Background Effects -->
+    <div class="background-glob"></div>
+    <div class="background-glob glob-2"></div>
+    <div class="particles"></div>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page active-page">
+        <main class="container">
+            <section id="input-section" class="hero-section">
+                <div class="hero-content">
+                    <div class="badge animate-bounce">Research. Reasoning. Results.</div>
+                    <h1 class="hero-title">
+                        What do you want to<br>
+                        <span class="gradient-text">master today?</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Autonomous AI agents will plan, research, and write a comprehensive deep-dive report for you.
+                        <br>Combining the power of <strong>Agentic AI</strong> and <strong>RAG (Retrieval-Augmented Generation)</strong>.
+                    </p>
+                    
+                    <form id="research-form" class="research-form">
+                        <div class="input-wrapper">
+                            <input type="text" id="topic-input" placeholder="e.g., The Future of Quantum Computing..." required autocomplete="off">
+                            <button type="submit" id="start-btn" class="btn-primary">
+                                <span>Start Research</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="quick-stats">
+                        <div class="stat-item animate-fade-in" style="animation-delay: 0.1s">
+                            <div class="stat-number">4</div>
+                            <div class="stat-label">AI Agents</div>
+                        </div>
+                        <div class="stat-item animate-fade-in" style="animation-delay: 0.2s">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Topics</div>
+                        </div>
+                        <div class="stat-item animate-fade-in" style="animation-delay: 0.3s">
+                            <div class="stat-number">RAG</div>
+                            <div class="stat-label">Enhanced</div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <div class="btn-with-image">
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=120&h=120&fit=crop" alt="Documents" class="btn-image-large">
+                            <button onclick="showPage('documents')" class="btn-document animate-scale-in" style="animation-delay: 0.4s">
+                                Get Personal Document Research
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section id="progress-section" class="hidden">
+                <div class="status-card">
+                    <div class="loader-container">
+                        <div class="loader-ring"></div>
+                        <div class="pulse-ring"></div>
+                    </div>
+                    <h2 id="current-status" class="status-title">Initializing Agents...</h2>
+                    <p class="status-subtitle">Our AI agents are working on your research</p>
+                    <div id="logs-container" class="logs-container">
+                        <!-- Logs injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="result-section" class="hidden">
+                <header class="result-header">
+                    <button id="back-btn" class="btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        New Research
+                    </button>
+                    <div class="export-actions">
+                        <button onclick="window.print()" class="btn-secondary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M6 9V2H18V9M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18M6 14H18V22H6V14Z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Export PDF
+                        </button>
+                    </div>
+                </header>
+                <article id="report-content" class="paper">
+                    <!-- Final HTML report injected here -->
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <!-- Document Upload & Q&A Page -->
+    <div id="documents-page" class="page">
+        <main class="container page-content">
+            <div class="page-header">
+                <h1 class="page-title">Personal Document Research</h1>
+                <p class="page-subtitle">Upload your documents and ask questions using RAG + Agentic AI</p>
+            </div>
+
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-card">
+                    <div class="section-header-with-image-large">
+                        <div class="section-image-box">
+                            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=150&h=150&fit=crop" alt="Documents" class="section-icon-large">
+                        </div>
+                        <h2>Upload Your Documents</h2>
+                    </div>
+                    <p class="upload-description">
+                        Upload PDF, TXT, or MD files. Our system will index them and make them searchable.
+                    </p>
+                    
+                    <form id="upload-form" class="upload-form">
+                        <div class="file-upload-area" id="file-upload-area">
+                            <input type="file" id="file-input" multiple accept=".pdf,.txt,.md" style="display: none;">
+                            <div class="upload-placeholder">
+                                <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=48&h=48&fit=crop" alt="Upload" class="upload-icon">
+                                <p><strong>Click to upload</strong> or drag and drop</p>
+                                <p class="file-types">PDF, TXT, MD files (Max 10MB each)</p>
+                            </div>
+                        </div>
+                        
+                        <div id="file-list" class="file-list"></div>
+                        
+                        <div style="text-align: center; margin-top: 1.5rem;">
+                            <button type="submit" id="upload-btn" class="btn-primary" disabled>
+                                <span>Upload & Process Documents</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="upload-status" class="upload-status hidden"></div>
+                </div>
+            </section>
+
+            <!-- Q&A Section -->
+            <section id="qa-section" class="qa-section hidden">
+                <div class="qa-card">
+                    <div class="section-header-with-image-large">
+                        <div class="section-image-box">
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=150&h=150&fit=crop" alt="Q&A" class="section-icon-large">
+                        </div>
+                        <h2>Ask Questions About Your Documents</h2>
+                    </div>
+                    <p class="qa-description">
+                        Ask any question and our AI will search through your uploaded documents to provide accurate answers.
+                    </p>
+
+                    <div id="session-info" class="session-info">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+
+                    <form id="qa-form" class="qa-form">
+                        <div class="input-wrapper">
+                            <input type="text" id="question-input" placeholder="e.g., What are the main findings in the documents?" required>
+                            <button type="submit" id="ask-btn" class="btn-primary">
+                                <span>Ask</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="qa-results" class="qa-results"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- About Page -->
+    <div id="about-page" class="page">
+        <main class="container page-content">
+            <div class="page-header">
+                <h1 class="page-title">About RAGentic.ai</h1>
+                <p class="page-subtitle">Understanding the Technology Behind Autonomous Research</p>
+            </div>
+
+            <div class="content-grid">
+                <section class="info-card animate-slide-up">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop" alt="Agentic AI" class="card-image">
+                    </div>
+                    <h2>What is Agentic AI?</h2>
+                    <p>
+                        <strong>Agentic AI</strong> refers to AI systems that can autonomously plan, make decisions, 
+                        and execute complex tasks without constant human intervention. Our system uses a multi-agent 
+                        architecture where specialized AI agents work together:
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>Planner Agent</strong> - Breaks down topics into research sub-questions</li>
+                        <li><strong>Researcher Agent</strong> - Searches and retrieves relevant information</li>
+                        <li><strong>Analyzer Agent</strong> - Synthesizes findings into insights</li>
+                        <li><strong>Writer Agent</strong> - Compiles comprehensive reports</li>
+                    </ul>
+                </section>
+
+                <section class="info-card animate-slide-up" style="animation-delay: 0.1s">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop" alt="RAG Technology" class="card-image">
+                    </div>
+                    <h2>What is RAG?</h2>
+                    <p>
+                        <strong>RAG (Retrieval-Augmented Generation)</strong> enhances AI responses by combining:
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>Retrieval</strong> - Searches your custom documents using semantic search</li>
+                        <li><strong>Augmentation</strong> - Adds retrieved context to the AI's knowledge</li>
+                        <li><strong>Generation</strong> - Creates responses using both your documents and AI knowledge</li>
+                    </ul>
+                    <p class="highlight-box">
+                        <strong>Result:</strong> More accurate, document-backed research reports that combine 
+                        your specific knowledge with the AI's general understanding.
+                    </p>
+                </section>
+
+                <section class="info-card full-width animate-slide-up" style="animation-delay: 0.2s">
+                    <div class="card-image-wrapper full-width-image">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=400&fit=crop" alt="Team Collaboration" class="card-image">
+                    </div>
+                    <h2>Agentic AI + RAG = Powerful Research</h2>
+                    <p>
+                        By combining <strong>Agentic AI</strong> (autonomous planning and execution) with 
+                        <strong>RAG</strong> (document-enhanced generation), we create a research system that:
+                    </p>
+                    <div class="benefits-grid">
+                        <div class="benefit-item animate-scale-in" style="animation-delay: 0.3s">
+                            <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=80&h=80&fit=crop" alt="Documents" class="benefit-image">
+                            <h3>Uses Your Documents</h3>
+                            <p>Indexes and searches your PDF, TXT, and MD files</p>
+                        </div>
+                        <div class="benefit-item animate-scale-in" style="animation-delay: 0.4s">
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=80&h=80&fit=crop" alt="AI Brain" class="benefit-image">
+                            <h3>Autonomous Planning</h3>
+                            <p>AI agents break down complex topics automatically</p>
+                        </div>
+                        <div class="benefit-item animate-scale-in" style="animation-delay: 0.5s">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop" alt="Analysis" class="benefit-image">
+                            <h3>Intelligent Synthesis</h3>
+                            <p>Combines multiple sources into coherent insights</p>
+                        </div>
+                        <div class="benefit-item animate-scale-in" style="animation-delay: 0.6s">
+                            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=80&h=80&fit=crop" alt="Reports" class="benefit-image">
+                            <h3>Professional Reports</h3>
+                            <p>Generates publication-ready research reports</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- How It Works Page -->
+    <div id="how-it-works-page" class="page">
+        <main class="container page-content">
+            <div class="page-header">
+                <h1 class="page-title">How It Works</h1>
+                <p class="page-subtitle">The Research Process from Start to Finish</p>
+            </div>
+
+            <div class="workflow-container">
+                <div class="workflow-step animate-slide-right" style="animation-delay: 0.1s">
+                    <div class="step-image-wrapper-large">
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=100&h=100&fit=crop" alt="Submit" class="step-image-large">
+                    </div>
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>You Submit a Topic</h3>
+                        <p>Enter any research topic you want to explore</p>
+                    </div>
+                </div>
+
+                <div class="workflow-arrow">→</div>
+
+                <div class="workflow-step animate-slide-right" style="animation-delay: 0.2s">
+                    <div class="step-image-wrapper-large">
+                        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=100&h=100&fit=crop" alt="Planning" class="step-image-large">
+                    </div>
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Planner Agent</h3>
+                        <p>Breaks down your topic into 3-5 focused sub-questions</p>
+                    </div>
+                </div>
+
+                <div class="workflow-arrow">→</div>
+
+                <div class="workflow-step animate-slide-right" style="animation-delay: 0.3s">
+                    <div class="step-image-wrapper-large">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop" alt="Research" class="step-image-large">
+                    </div>
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Researcher Agent + RAG</h3>
+                        <p>Searches your documents (if available) and retrieves relevant chunks using semantic search</p>
+                    </div>
+                </div>
+
+                <div class="workflow-arrow">→</div>
+
+                <div class="workflow-step animate-slide-right" style="animation-delay: 0.4s">
+                    <div class="step-image-wrapper-large">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=100&h=100&fit=crop" alt="Analysis" class="step-image-large">
+                    </div>
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Analyzer Agent</h3>
+                        <p>Synthesizes retrieved information into insights for each sub-question</p>
+                    </div>
+                </div>
+
+                <div class="workflow-arrow">→</div>
+
+                <div class="workflow-step animate-slide-right" style="animation-delay: 0.5s">
+                    <div class="step-image-wrapper-large">
+                        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=100&h=100&fit=crop" alt="Writing" class="step-image-large">
+                    </div>
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Writer Agent</h3>
+                        <p>Compiles all insights into a comprehensive, professional HTML report</p>
+                    </div>
+                </div>
+
+                <div class="workflow-arrow">→</div>
+
+                <div class="workflow-step final-step animate-slide-right" style="animation-delay: 0.6s">
+                    <div class="step-image-wrapper-large">
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=100&h=100&fit=crop" alt="Complete" class="step-image-large">
+                    </div>
+                    <div class="step-number">✓</div>
+                    <div class="step-content">
+                        <h3>Your Report is Ready!</h3>
+                        <p>Download, share, or start a new research</p>
+                    </div>
+                </div>
+            </div>
+
+            <section class="info-card full-width animate-slide-up" style="margin-top: 3rem;">
+                <div class="card-image-wrapper full-width-image">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=400&fit=crop" alt="Document Research" class="card-image">
+                </div>
+                <h2>Personal Document Research (RAG Enhancement)</h2>
+                <p style="margin-bottom: 2rem; color: var(--text-secondary);">
+                    Upload your own documents and ask questions directly. Our system uses RAG to search through your documents and provide accurate answers.
+                </p>
+                <div class="rag-instructions">
+                    <div class="instruction-step">
+                        <div class="instruction-image-box">
+                            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=120&h=120&fit=crop" alt="Upload" class="instruction-image-large">
+                        </div>
+                        <div>
+                            <h4>Step 1: Upload Documents</h4>
+                            <p>Go to the <strong>Documents</strong> page and upload your PDF, TXT, or MD files directly through the web interface</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <div class="instruction-image-box">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&h=120&fit=crop" alt="Process" class="instruction-image-large">
+                        </div>
+                        <div>
+                            <h4>Step 2: Automatic Processing</h4>
+                            <p>The system automatically processes your documents: chunks them, creates embeddings, and indexes them in a vector database</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <div class="instruction-image-box">
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=120&h=120&fit=crop" alt="Questions" class="instruction-image-large">
+                        </div>
+                        <div>
+                            <h4>Step 3: Ask Questions</h4>
+                            <p>Ask any question about your documents. The AI will search through your uploaded documents using semantic search and provide answers based on your content</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <div class="instruction-image-box">
+                            <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=120&h=120&fit=crop" alt="Delete" class="instruction-image-large">
+                        </div>
+                        <div>
+                            <h4>Step 4: Delete When Done</h4>
+                            <p>After your research, you can delete all uploaded documents and session data for complete privacy and security</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 2rem;">
+                    <strong>Note:</strong> The general research feature (Home page) uses the AI's general knowledge. 
+                    The Document Research feature (Documents page) uses your uploaded documents for personalized answers.
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Features Page -->
+    <div id="features-page" class="page">
+        <main class="container page-content">
+            <div class="page-header">
+                <h1 class="page-title">Features</h1>
+                <p class="page-subtitle">Everything You Need for Professional Research</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.1s">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=120&h=120&fit=crop" alt="Multi-Agent" class="feature-image">
+                    <h3>Multi-Agent Architecture</h3>
+                    <p>Four specialized AI agents work together autonomously to plan, research, analyze, and write</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.2s">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&h=120&fit=crop" alt="RAG" class="feature-image">
+                    <h3>RAG Integration</h3>
+                    <p>Search and use your own documents with semantic search powered by FAISS vector database</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.3s">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=120&h=120&fit=crop" alt="Real-Time" class="feature-image">
+                    <h3>Real-Time Progress</h3>
+                    <p>Watch your research progress in real-time as agents work through each step</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.4s">
+                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=120&h=120&fit=crop" alt="Reports" class="feature-image">
+                    <h3>Professional Reports</h3>
+                    <p>Get publication-ready HTML reports with proper structure and formatting</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.5s">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&h=120&fit=crop" alt="Modern UI" class="feature-image">
+                    <h3>Modern UI</h3>
+                    <p>Beautiful, responsive interface with smooth animations and professional design</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.6s">
+                    <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=120&h=120&fit=crop" alt="Export" class="feature-image">
+                    <h3>Export Options</h3>
+                    <p>Export reports to PDF or print directly from your browser</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.7s">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=120&h=120&fit=crop" alt="Retry" class="feature-image">
+                    <h3>Retry Logic</h3>
+                    <p>Automatic retry with exponential backoff for API quota management</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.8s">
+                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=120&h=120&fit=crop" alt="Upload" class="feature-image">
+                    <h3>Document Upload</h3>
+                    <p>Upload your own PDF, TXT, or MD files and ask questions directly about your documents</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 0.9s">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=120&h=120&fit=crop" alt="Q&A" class="feature-image">
+                    <h3>Q&A Interface</h3>
+                    <p>Ask questions about your uploaded documents and get accurate answers using RAG</p>
+                </div>
+
+                <div class="feature-card animate-scale-in" style="animation-delay: 1s">
+                    <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=120&h=120&fit=crop" alt="Security" class="feature-image">
+                    <h3>Secure Deletion</h3>
+                    <p>Delete all uploaded documents and session data when you're done for complete privacy</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
