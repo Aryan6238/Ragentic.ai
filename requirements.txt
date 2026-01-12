@@ -20,4 +20,5 @@ python-multipart>=0.0.9
 chromadb>=0.5.5
 
 # LLM API (NEW, supported SDK)
-google-genai>=0.3.0
+google-generativeai>=0.8.6
+
