@@ -21,6 +21,7 @@ chromadb>=0.5.5
 
 # LLM API (NEW, supported SDK)
 google-generativeai>=0.8.6
+google-genai
 
 langchain-community>=0.0.20
 langchain-text-splitters>=0.0.1

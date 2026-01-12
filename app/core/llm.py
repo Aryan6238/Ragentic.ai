@@ -1,4 +1,4 @@
-import google.generativeai as genai
+from google import genai
 import requests
 from app.core.config import settings
 import logging
@@ -14,9 +14,15 @@ class LLMClient:
         if self.provider == "gemini":
             if not settings.GEMINI_API_KEY:
                 logger.warning("GEMINI_API_KEY not set. Gemini calls will fail.")
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            model_name = getattr(settings, 'GEMINI_MODEL', 'gemini-flash-latest')
-            self.model = genai.GenerativeModel(model_name)
+            
+            # New SDK Initialization
+            if settings.GEMINI_API_KEY:
+                self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
+            else:
+                self.client = None
+                
+            model_name = getattr(settings, 'GEMINI_MODEL', 'gemini-1.5-flash') # Default to 1.5-flash if not set
+            self.model_name = model_name
             logger.info(f"Using Gemini model: {model_name}")
             
         elif self.provider == "huggingface":
@@ -33,8 +39,14 @@ class LLMClient:
         for attempt in range(max_retries):
             try:
                 if self.provider == "gemini":
-                    # specific to Gemini library
-                    response = self.model.generate_content(full_prompt)
+                    if not self.client:
+                        return "Error: GEMINI_API_KEY is not set."
+                        
+                    # specific to Gemini library (google-genai)
+                    response = self.client.models.generate_content(
+                        model=self.model_name,
+                        contents=full_prompt
+                    )
                     return response.text
                     
                 elif self.provider == "huggingface":
