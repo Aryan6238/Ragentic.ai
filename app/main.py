@@ -26,16 +26,10 @@ app.include_router(api_router, prefix="/api/v1")
 
 # ---------------- STATIC FILES ----------------
 app.mount(
-    "/static",
-    StaticFiles(directory=settings.STATIC_DIR),
+    "/",
+    StaticFiles(directory=settings.STATIC_DIR, html=True),
     name="static"
 )
-
-# ---------------- FRONTEND ENTRY ----------------
-@app.get("/")
-def serve_frontend():
-    index_path = os.path.join(settings.STATIC_DIR, "index.html")
-    return FileResponse(index_path)
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
