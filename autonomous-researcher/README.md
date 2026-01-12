@@ -71,9 +71,3 @@ graph LR
 *   `GET /api/v1/stream/{task_id}`: Real-time progress logs (SSE-style polling).
 *   `GET /api/v1/result/{task_id}`: Retrieve the final HTML report.
 
-## 💼 Resume-Ready Key Achievements
-
-*   **Designed an Event-Driven Agent Architecture**: Decoupled agent reasoning (Planning, Analysis) from execution tools (RAG), allowing for scalable multi-step workflows.
-*   **Implemented Custom RAG Pipeline**: Built a high-performance retrieval system using FAISS and Recursive Character Chunking, optimizing context relevance for the LLM.
-*   **Engineered Production-Grade FastAPI Backend**: Utilized async/await for non-blocking inference, Pydantic for validation, and dependency injection for testability.
-*   **Created "Vibe" Frontend**: Developed a highly responsive, modern UI with Vanilla JS/CSS, achieving <100ms interaction latency by removing framework overhead.
