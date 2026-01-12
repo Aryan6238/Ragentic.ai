@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from app.api.routes import router as api_router
 from app.core.config import settings
+import os
 
 app = FastAPI(
     title="Autonomous Research Assistant",
@@ -10,34 +12,32 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS
+# ---------------- CORS ----------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allow all for local dev
+    allow_origins=["*"],  # OK for local dev
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# API Routes
+# ---------------- API ROUTES ----------------
 app.include_router(api_router, prefix="/api/v1")
 
-# Static Files (Frontend)
-app.mount("/", StaticFiles(directory=settings.STATIC_DIR, html=True), name="static")
+# ---------------- STATIC FILES ----------------
+app.mount(
+    "/static",
+    StaticFiles(directory=settings.STATIC_DIR),
+    name="static"
+)
 
+# ---------------- FRONTEND ENTRY ----------------
+@app.get("/")
+def serve_frontend():
+    index_path = os.path.join(settings.STATIC_DIR, "index.html")
+    return FileResponse(index_path)
+
+# ---------------- RUN ----------------
 if __name__ == "__main__":
     import uvicorn
-    import sys
-    import io
-    
-    # Fix encoding for Windows terminal
-    if sys.platform == 'win32':
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-    
-    print("\n" + "="*60)
-    print("RAGentic.ai Server Starting...")
-    print("="*60)
-    print(f"Server running at: http://localhost:8000")
-    print(f"API Documentation: http://localhost:8000/docs")
-    print("="*60 + "\n")
-    uvicorn.run("app.main:app", host="localhost", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
