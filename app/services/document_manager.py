@@ -5,8 +5,6 @@ from typing import Dict, List, Optional
 from fastapi import UploadFile
 import google.generativeai as genai
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-import faiss
-import pickle
 import numpy as np
 
 from app.core.config import settings
@@ -39,10 +37,8 @@ class DocumentManager:
     
     def _create_session_vector_db(self, session_id: str):
         """Create a new vector database for a session."""
-        dimension = 768  # Gemini embedding dimension
-        index = faiss.IndexFlatL2(dimension)
-        metadata = {}
-        return {"index": index, "metadata": metadata}
+        # Replacing FAISS with simple in-memory list for transient session storage
+        return {"vectors": [], "metadata": []}
     
     def _get_embedding(self, text: str) -> List[float]:
         """Get embedding for text using Gemini."""
@@ -109,10 +105,6 @@ class DocumentManager:
                 if ext == '.pdf':
                     # Try to extract text from PDF
                     try:
-                        # For now, try basic text extraction
-                        # In production, you'd use PyPDF2: from PyPDF2 import PdfReader
-                        # reader = PdfReader(file_path)
-                        # text = "\n".join([page.extract_text() for page in reader.pages])
                         text = content.decode('utf-8', errors='ignore')
                         # If it's binary PDF, we'll get mostly garbage, but some text might be readable
                         if len(text.strip()) < 100:  # Likely binary PDF
@@ -142,12 +134,8 @@ class DocumentManager:
                 # Add to session vector DB
                 if vectors_to_add:
                     vdb = session["vector_db"]
-                    vector_np = np.array(vectors_to_add).astype('float32')
-                    start_id = vdb["index"].ntotal
-                    vdb["index"].add(vector_np)
-                    
-                    for i, meta in enumerate(metadata_to_add):
-                        vdb["metadata"][start_id + i] = meta
+                    vdb["vectors"].extend(vectors_to_add)
+                    vdb["metadata"].extend(metadata_to_add)
                 
                 session["documents"].append(file.filename)
                 uploaded_files.append(file.filename)
@@ -171,7 +159,8 @@ class DocumentManager:
         session = self.sessions[session_id]
         vdb = session["vector_db"]
         
-        if vdb["index"].ntotal == 0:
+        vectors = vdb["vectors"]
+        if not vectors:
             return [], []
         
         # Get query embedding
@@ -179,15 +168,36 @@ class DocumentManager:
         if not query_vector:
             return [], []
         
-        # Search
-        vector_np = np.array([query_vector]).astype('float32')
-        distances, indices = vdb["index"].search(vector_np, k)
+        # Simple Cosine Similarity using Numpy
+        # 1. Convert to numpy arrays
+        vecs = np.array(vectors)
+        q = np.array(query_vector)
+        
+        # 2. Normalize (Gemini embeddings are usually normalized, but safe to do)
+        vecs_norm = np.linalg.norm(vecs, axis=1)
+        q_norm = np.linalg.norm(q)
+        
+        # Avoid division by zero
+        vecs_norm[vecs_norm == 0] = 1e-10
+        if q_norm == 0:
+            q_norm = 1e-10
+            
+        # 3. Calculate Sim
+        # Dot product
+        dot_product = np.dot(vecs, q)
+        # Cosine sim
+        similarities = dot_product / (vecs_norm * q_norm)
+        
+        # 4. Get top k
+        # argsort returns indices of sorted from low to high, so we reverse
+        top_indices = np.argsort(similarities)[-k:][::-1]
         
         results = []
         sources = set()
         
-        for i, idx in enumerate(indices[0]):
-            if idx != -1 and idx in vdb["metadata"]:
+        for idx in top_indices:
+            # We must ensure we don't go out of bounds if k > len
+            if idx < len(vdb["metadata"]):
                 item = vdb["metadata"][idx]
                 results.append(item["text"])
                 sources.add(item["source"])
@@ -204,7 +214,7 @@ class DocumentManager:
             "session_id": session_id,
             "document_count": len(session["documents"]),
             "documents": session["documents"],
-            "vector_count": session["vector_db"]["index"].ntotal
+            "vector_count": len(session["vector_db"]["vectors"])
         }
     
     def delete_session(self, session_id: str) -> bool:
